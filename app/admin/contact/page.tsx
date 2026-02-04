@@ -41,16 +41,7 @@ export default function ContactPage() {
     e.preventDefault()
     setSaving(true)
     try {
-      const { count } = await supabase.from('site_config').select('*', { count: 'exact', head: true }).eq('id', 1)
-
-      let error;
-      if (count === 0) {
-          const { error: insertError } = await supabase.from('site_config').insert({ ...data, id: 1 })
-          error = insertError
-      } else {
-          const { error: updateError } = await supabase.from('site_config').update(data).eq('id', 1)
-          error = updateError
-      }
+      const { error } = await supabase.from('site_config').upsert({ ...data, id: 1 })
 
       if (error) throw error
       toast.success("Informações de contato salvas!")
