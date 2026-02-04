@@ -73,7 +73,7 @@ export default function AboutPage() {
       try {
           const { error } = await supabase.from('about_spotlights').insert({
               text: newSpotlight,
-              sort_order: spotlights.length + 1
+              sort_order: (spotlights.reduce((max, s) => Math.max(s.sort_order, max), 0)) + 1
           })
           if (error) throw error
           setNewSpotlight("")
