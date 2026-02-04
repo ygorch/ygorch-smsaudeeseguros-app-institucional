@@ -87,7 +87,7 @@ export default function AboutPage() {
   const handleDeleteSpotlight = async (id: number) => {
       try {
           await supabase.from('about_spotlights').delete().eq('id', id)
-          setSpotlights(prev => prev.filter(s => s.id !== id))
+          fetchData()
           toast.success("Removido")
       } catch (error) {
           toast.error("Erro ao remover")
