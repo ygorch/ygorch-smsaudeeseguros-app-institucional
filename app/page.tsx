@@ -38,16 +38,16 @@ export default async function Home() {
     <div className="flex min-h-screen flex-col">
       <Header
         logoUrl={siteConfig?.logo_url}
-        menuItems={menuItems}
+        menuItems={menuItems || []}
         ctaText={siteConfig?.header_cta_text}
         ctaLink={siteConfig?.header_cta_link}
       />
       <main className="flex-1">
         <Hero data={heroSection} />
-        <Services data={solutions} />
-        <About data={{ section: aboutSection, spotlights: aboutSpotlights, images: aboutImages }} />
-        <Testimonials data={testimonials} />
-        <FAQ data={faqs} />
+        <Services data={solutions || []} />
+        <About data={{ section: aboutSection, spotlights: aboutSpotlights || [], images: aboutImages || [] }} />
+        <Testimonials data={testimonials || []} />
+        <FAQ data={faqs || []} />
         <Contact data={siteConfig} />
       </main>
       <Footer data={siteConfig} />
