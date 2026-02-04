@@ -111,7 +111,7 @@ export default function AboutPage() {
   const handleDeleteImage = async (id: number) => {
       try {
           await supabase.from('about_images').delete().eq('id', id)
-          setImages(prev => prev.filter(i => i.id !== id))
+          fetchData()
           toast.success("Imagem removida")
       } catch (error) {
           toast.error("Erro ao remover imagem")
