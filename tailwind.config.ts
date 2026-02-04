@@ -72,6 +72,9 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-josefin-sans)", "sans-serif"],
       },
+      backgroundImage: {
+        "brand-gradient": "linear-gradient(to right, #009D51, #2D1BFF)",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

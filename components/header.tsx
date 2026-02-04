@@ -51,7 +51,7 @@ export function Header() {
                 Área do Cliente
               </Link>
             </Button>
-            <Button asChild className="bg-primary hover:bg-primary/90">
+            <Button asChild>
               <Link href="#contact">Cotar Agora</Link>
             </Button>
           </nav>
@@ -90,7 +90,7 @@ export function Header() {
                 Área do Cliente
               </Link>
             </Button>
-             <Button asChild className="w-full bg-primary hover:bg-primary/90">
+             <Button asChild className="w-full">
               <Link href="#contact" onClick={() => setIsMenuOpen(false)}>Cotar Agora</Link>
             </Button>
           </div>

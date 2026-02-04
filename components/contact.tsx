@@ -155,7 +155,7 @@ export function Contact() {
                       placeholder="Conte um pouco mais sobre o que você precisa..."
                    />
                 </div>
-                <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isSubmitting}>
+                <Button type="submit" className="w-full" disabled={isSubmitting}>
                   {isSubmitting ? "Enviando..." : "Solicitar Cotação Gratuita"}
                 </Button>
               </form>

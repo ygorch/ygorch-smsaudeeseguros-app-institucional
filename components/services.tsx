@@ -38,7 +38,8 @@ export function Services() {
         </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {services.map((service, index) => (
-            <Card key={index} className="border-t-4 border-t-primary shadow-lg hover:shadow-xl transition-shadow">
+            <Card key={index} className="relative overflow-hidden shadow-lg hover:shadow-xl transition-shadow border-none">
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-brand-gradient" />
               <CardHeader>
                 <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-green-50 text-primary">
                   <service.icon className="h-6 w-6" />
