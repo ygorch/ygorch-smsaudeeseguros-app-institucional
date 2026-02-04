@@ -62,14 +62,9 @@ export function Hero({ data, siteConfig }: HeroProps) {
              {/* Hero Image */}
              <div className="relative h-[400px] w-full max-w-[500px] overflow-hidden rounded-2xl bg-white/10 shadow-xl flex items-center justify-center border border-white/20 backdrop-blur-sm">
                 <div
-                    className="absolute inset-0 bg-cover bg-center opacity-60 mix-blend-overlay"
+                    className="absolute inset-0 bg-cover bg-center"
                     style={{ backgroundImage: `url('${hero_image_url}')` }}
                 ></div>
-                <div className="relative z-10 p-8 text-center">
-                    <p className="text-primary font-medium bg-white/90 p-4 rounded-lg backdrop-blur-sm shadow-lg">
-                      &quot;{quote_text}&quot;
-                    </p>
-                </div>
              </div>
           </div>
         </div>
