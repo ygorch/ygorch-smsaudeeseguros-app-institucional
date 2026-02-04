@@ -57,7 +57,7 @@ export default function MenuPage() {
       })
     } else {
       setEditingItem(null)
-      setFormData({ label: "", url: "", sort_order: items.length + 1 })
+      setFormData({ label: "", url: "", sort_order: (items.reduce((max, item) => Math.max(item.sort_order, max), 0)) + 1 })
     }
     setIsOpen(true)
   }
