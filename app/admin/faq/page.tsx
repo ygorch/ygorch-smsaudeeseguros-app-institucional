@@ -56,7 +56,7 @@ export default function FAQPage() {
       })
     } else {
       setEditingItem(null)
-      setFormData({ question: "", answer: "", sort_order: (items.reduce((max, item) => Math.max(item.sort_order, max), 0)) + 1 })
+      setFormData({ question: "", answer: "", sort_order: items.length + 1 })
     }
     setIsOpen(true)
   }

@@ -53,7 +53,13 @@ export default function AboutPage() {
     e.preventDefault()
     setSavingText(true)
     try {
-       await supabase.from('about_section').upsert({ ...aboutData, id: 1 })
+       const { count } = await supabase.from('about_section').select('*', { count: 'exact', head: true }).eq('id', 1)
+
+       if (count === 0) {
+           await supabase.from('about_section').insert({ ...aboutData, id: 1 })
+       } else {
+           await supabase.from('about_section').update(aboutData).eq('id', 1)
+       }
        toast.success("Texto salvo")
     } catch (error) {
        toast.error("Erro ao salvar texto")
@@ -67,7 +73,7 @@ export default function AboutPage() {
       try {
           const { error } = await supabase.from('about_spotlights').insert({
               text: newSpotlight,
-              sort_order: (spotlights.reduce((max, s) => Math.max(s.sort_order, max), 0)) + 1
+              sort_order: spotlights.length + 1
           })
           if (error) throw error
           setNewSpotlight("")
@@ -81,7 +87,7 @@ export default function AboutPage() {
   const handleDeleteSpotlight = async (id: number) => {
       try {
           await supabase.from('about_spotlights').delete().eq('id', id)
-          fetchData()
+          setSpotlights(prev => prev.filter(s => s.id !== id))
           toast.success("Removido")
       } catch (error) {
           toast.error("Erro ao remover")
@@ -105,7 +111,7 @@ export default function AboutPage() {
   const handleDeleteImage = async (id: number) => {
       try {
           await supabase.from('about_images').delete().eq('id', id)
-          fetchData()
+          setImages(prev => prev.filter(i => i.id !== id))
           toast.success("Imagem removida")
       } catch (error) {
           toast.error("Erro ao remover imagem")

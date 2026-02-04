@@ -60,7 +60,7 @@ export default function SolutionsPage() {
       })
     } else {
       setEditingItem(null)
-      setFormData({ title: "", description: "", icon_name: "Shield", sort_order: (items.reduce((max, item) => Math.max(item.sort_order, max), 0)) + 1 })
+      setFormData({ title: "", description: "", icon_name: "Shield", sort_order: items.length + 1 })
     }
     setIsOpen(true)
   }

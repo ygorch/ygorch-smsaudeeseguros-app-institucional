@@ -5,6 +5,9 @@ import { createClient } from "@/lib/supabase/server"
 import { AdminSidebar } from "@/components/admin/sidebar"
 import { UserNav } from "@/components/admin/user-nav"
 
+// Ensure this layout and its children are not statically generated
+export const dynamic = 'force-dynamic'
+
 export default async function DashboardLayout({
   children,
 }: {
