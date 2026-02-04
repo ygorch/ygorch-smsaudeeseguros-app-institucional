@@ -57,7 +57,7 @@ export default function TestimonialsPage() {
       })
     } else {
       setEditingItem(null)
-      setFormData({ name: "", role: "", content: "", sort_order: items.length + 1 })
+      setFormData({ name: "", role: "", content: "", sort_order: (items.reduce((max, item) => Math.max(item.sort_order, max), 0)) + 1 })
     }
     setIsOpen(true)
   }
