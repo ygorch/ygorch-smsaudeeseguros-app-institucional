@@ -49,7 +49,7 @@ export function Contact() {
                 </div>
                 <div>
                   <p className="font-medium text-slate-900">E-mail</p>
-                  <p className="text-slate-600">contato@smsaudeseguros.com.br</p>
+                  <p className="text-slate-600">{process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'contato@smsaudeseguros.com.br'}</p>
                 </div>
               </div>
 
