@@ -53,13 +53,7 @@ export default function AboutPage() {
     e.preventDefault()
     setSavingText(true)
     try {
-       const { count } = await supabase.from('about_section').select('*', { count: 'exact', head: true }).eq('id', 1)
-
-       if (count === 0) {
-           await supabase.from('about_section').insert({ ...aboutData, id: 1 })
-       } else {
-           await supabase.from('about_section').update(aboutData).eq('id', 1)
-       }
+       await supabase.from('about_section').upsert({ ...aboutData, id: 1 })
        toast.success("Texto salvo")
     } catch (error) {
        toast.error("Erro ao salvar texto")
