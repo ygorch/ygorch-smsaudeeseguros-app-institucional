@@ -78,3 +78,11 @@ Error:
 Import trace for requested module:
 ./app/admin/login/page.tsx
  ✓ Compiled in 3.8s (2224 modules)
+ ✓ Compiled in 16.5s (2210 modules)
+ ⚠ Found a change in next.config.mjs. Restarting the server to apply the changes...
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 6.3s

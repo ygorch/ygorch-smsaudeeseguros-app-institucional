@@ -4,11 +4,11 @@ import { cookies } from 'next/headers'
 export const createClient = () => {
   const cookieStore = cookies()
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_PUBLIC
+  const supabaseUrl = process.env.SUPABASE_URL
+  const supabaseKey = process.env.SUPABASE_ANON_PUBLIC
 
   if (!supabaseUrl || !supabaseKey) {
-    throw new Error('Supabase URL and Key must be defined')
+    throw new Error('Supabase URL (SUPABASE_URL) and Key (SUPABASE_ANON_PUBLIC) must be defined')
   }
 
   return createServerClient(
@@ -24,8 +24,6 @@ export const createClient = () => {
             cookieStore.set({ name, value, ...options })
           } catch (error) {
             // The `set` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing
-            // user sessions.
           }
         },
         remove(name: string, options: CookieOptions) {
@@ -33,8 +31,6 @@ export const createClient = () => {
             cookieStore.set({ name, value: '', ...options })
           } catch (error) {
             // The `delete` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing
-            // user sessions.
           }
         },
       },

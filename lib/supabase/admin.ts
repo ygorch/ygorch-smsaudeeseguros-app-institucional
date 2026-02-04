@@ -1,11 +1,11 @@
 import { createClient } from '@supabase/supabase-js'
 
 export const createAdminClient = () => {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_SERVICE_ROLE
+  const supabaseUrl = process.env.SUPABASE_URL
+  const serviceRoleKey = process.env.SUPABASE_SECRET_SERVICE_ROLE
 
   if (!supabaseUrl || !serviceRoleKey) {
-      throw new Error("Supabase Admin credentials missing")
+      throw new Error("Supabase Admin credentials (SUPABASE_URL, SUPABASE_SECRET_SERVICE_ROLE) missing")
   }
 
   return createClient(

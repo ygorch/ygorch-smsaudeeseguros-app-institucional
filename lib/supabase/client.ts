@@ -1,17 +1,22 @@
 import { createBrowserClient } from '@supabase/ssr'
 
 export const createClient = () => {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL // Fallback generally won't work on client unless prefixed, but added for consistency
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_PUBLIC
+  // These variables must be exposed via next.config.js 'env' config to be available in the browser
+  const supabaseUrl = process.env.SUPABASE_URL
+  const supabaseKey = process.env.SUPABASE_ANON_PUBLIC
 
   if (!supabaseUrl || !supabaseKey) {
-     console.error("Supabase URL or Key missing in client")
-     // Return a dummy client or handle error gracefully to prevent crash if possible,
-     // but client creation usually expects valid strings.
+     console.error("Supabase URL or Key missing in client. Ensure next.config.mjs exposes SUPABASE_URL and SUPABASE_ANON_PUBLIC.")
+     // Return a dummy client to prevent build crashes during prerendering
+     // This allows the build to complete even if env vars are missing in the CI/Build environment
+     return createBrowserClient(
+        'https://example.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.signature'
+     )
   }
 
   return createBrowserClient(
-    supabaseUrl!,
-    supabaseKey!
+    supabaseUrl,
+    supabaseKey
   )
 }
