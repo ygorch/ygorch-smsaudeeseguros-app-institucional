@@ -1,0 +1,13 @@
+
+> sm-saude-seguros@0.1.0 dev
+> next dev -p 3001
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3001
+
+ ✓ Starting...
+ ✓ Ready in 2.5s
+ ○ Compiling / ...
+ ✓ Compiled / in 4.7s (751 modules)
+ ✓ Compiled in 615ms (343 modules)
+ GET / 200 in 5468ms
