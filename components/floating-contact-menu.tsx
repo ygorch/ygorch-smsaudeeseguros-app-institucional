@@ -14,13 +14,13 @@ interface FloatingContactMenuProps {
 }
 
 export function FloatingContactMenu({ data }: FloatingContactMenuProps) {
-  const whatsappMatheus = data?.contact_whatsapp_matheus || "https://wa.me/5515991849321"
-  const whatsappSilvio = data?.contact_whatsapp_silvio || "https://wa.me/5511992668941"
-  const phone = data?.contact_phone || "(15) 99999-9999"
-  const email = data?.contact_email || "contato@smsaudeseguros.com.br"
+  const whatsappMatheus = data?.contact_whatsapp_matheus;
+  const whatsappSilvio = data?.contact_whatsapp_silvio;
+  const phone = data?.contact_phone;
+  const email = data?.contact_email;
 
   // Remove non-numeric characters for tel link
-  const phoneLink = `tel:${phone.replace(/\D/g, '')}`
+  const phoneLink = phone ? `tel:${phone.replace(/\D/g, '')}` : undefined;
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
