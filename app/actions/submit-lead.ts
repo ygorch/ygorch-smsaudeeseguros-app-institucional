@@ -3,11 +3,21 @@
 import { createClient } from '@/lib/supabase/server'
 
 export async function submitLead(token: string, formData: FormData) {
-  const name = formData.get("name") as string
-  const phone = formData.get("phone") as string
-  const email = formData.get("email") as string
-  const interest = formData.get("interest") as string
-  const message = formData.get("message") as string
+  const name = formData.get("name");
+  const phone = formData.get("phone");
+  const email = formData.get("email");
+  const interest = formData.get("interest");
+  const message = formData.get("message");
+
+  if (!name || typeof name !== 'string' ||
+      !phone || typeof phone !== 'string' ||
+      !email || typeof email !== 'string') {
+    return { error: 'Nome, telefone e e-mail são campos obrigatórios.' };
+  }
+
+  if ((interest && typeof interest !== 'string') || (message && typeof message !== 'string')) {
+    return { error: 'Dados de interesse ou mensagem inválidos.' };
+  }
 
   // 1. Verify reCAPTCHA
   // Use a placeholder secret if not provided in env, for development/testing
