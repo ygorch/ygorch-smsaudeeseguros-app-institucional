@@ -1,10 +1,11 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { createClient } from "@/lib/supabase/client"
 import { Mail, MapPin, Phone, Send } from "lucide-react"
 import * as React from "react"
 import { toast } from "sonner"
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3"
+import { submitLead } from "@/app/actions/submit-lead"
 
 interface ContactProps {
   data?: {
@@ -27,32 +28,35 @@ export function Contact({ data }: ContactProps) {
 
   const [isSubmitting, setIsSubmitting] = React.useState(false)
   const [submitted, setSubmitted] = React.useState(false)
-  const supabase = createClient()
+  const { executeRecaptcha } = useGoogleReCaptcha()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
 
-    const formData = new FormData(e.currentTarget)
-    const submissionData = {
-      name: formData.get("name"),
-      phone: formData.get("phone"),
-      email: formData.get("email"),
-      interest: formData.get("interest"),
-      message: formData.get("message"),
+    if (!executeRecaptcha) {
+        toast.error("Serviço de segurança indisponível. Tente recarregar a página.")
+        setIsSubmitting(false)
+        return
     }
 
-    try {
-      const { error } = await supabase.from('leads').insert([submissionData])
-      if (error) throw error
+    const formData = new FormData(e.currentTarget)
 
-      setSubmitted(true)
-      toast.success("Mensagem enviada com sucesso!")
+    try {
+        const token = await executeRecaptcha('submit_lead')
+        const result = await submitLead(token, formData)
+
+        if (result.error) {
+            toast.error(result.error)
+        } else {
+            setSubmitted(true)
+            toast.success("Mensagem enviada com sucesso!")
+        }
     } catch (error) {
-      console.error("Error submitting form:", error)
-      toast.error("Ocorreu um erro ao enviar. Tente novamente.")
+        console.error("Error submitting form:", error)
+        toast.error("Ocorreu um erro ao enviar. Tente novamente.")
     } finally {
-      setIsSubmitting(false)
+        setIsSubmitting(false)
     }
   }
 
@@ -206,6 +210,9 @@ export function Contact({ data }: ContactProps) {
                 <Button type="submit" className="w-full" disabled={isSubmitting}>
                   {isSubmitting ? "Enviando..." : "Solicitar Cotação Gratuita"}
                 </Button>
+                <p className="text-xs text-center text-slate-400">
+                  Protegido por reCAPTCHA e sujeito à Política de Privacidade e Termos de Serviço do Google.
+                </p>
               </form>
             )}
           </div>

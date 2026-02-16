@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Josefin_Sans } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
 import { createClient } from "@/lib/supabase/server";
+import { RecaptchaProvider } from "@/components/recaptcha-provider";
 import "./globals.css";
 
 const josefinSans = Josefin_Sans({
@@ -33,7 +34,9 @@ export default function RootLayout({
       <body
         className={`${josefinSans.variable} font-sans antialiased`}
       >
-        {children}
+        <RecaptchaProvider>
+          {children}
+        </RecaptchaProvider>
         <Toaster />
       </body>
     </html>

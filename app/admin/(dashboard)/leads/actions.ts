@@ -5,8 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 export async function getUsers() {
   const supabase = await createClient()
 
-  // Fetch profiles with emails (since profiles is linked to auth.users, but emails are in auth.users)
-  // Actually, my profiles table has an 'email' column based on `supabase/cms_schema.sql`
+  // Fetch profiles with emails
   const { data, error } = await supabase
     .from('profiles')
     .select('id, email, role')
@@ -23,14 +22,15 @@ export async function getUsers() {
 export async function getLeadInteractions(leadId: number) {
   const supabase = await createClient()
 
-  const { data, error } = await supabase
+  // 1. Fetch interactions with user_id instead of joining, to avoid FK issues
+  const { data: interactions, error } = await supabase
     .from('lead_interactions')
     .select(`
       id,
       interaction_type,
       notes,
       created_at,
-      user:profiles(email)
+      user_id
     `)
     .eq('lead_id', leadId)
     .order('created_at', { ascending: false })
@@ -40,7 +40,36 @@ export async function getLeadInteractions(leadId: number) {
     return []
   }
 
-  return data
+  if (!interactions || interactions.length === 0) {
+    return []
+  }
+
+  // 2. Extract unique user IDs
+  const userIds = Array.from(new Set(interactions.map(i => i.user_id).filter(Boolean)))
+
+  // 3. Fetch profiles manually
+  let profilesMap: Record<string, { email: string }> = {}
+
+  if (userIds.length > 0) {
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, email')
+        .in('id', userIds)
+
+      if (profiles) {
+          profiles.forEach(p => {
+              profilesMap[p.id] = p
+          })
+      }
+  }
+
+  // 4. Combine data
+  const enrichedInteractions = interactions.map(interaction => ({
+      ...interaction,
+      user: profilesMap[interaction.user_id] || { email: 'Usuário Desconhecido' }
+  }))
+
+  return enrichedInteractions
 }
 
 export async function addInteraction(prevState: any, formData: FormData) {
