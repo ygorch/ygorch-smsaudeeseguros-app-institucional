@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { ImagePlus, Loader2, X } from "lucide-react"
+import { ImagePlus, Loader2, X, Trash2 } from "lucide-react"
 import Image from "next/image"
 import { createClient } from "@/lib/supabase/client"
 import imageCompression from 'browser-image-compression'
@@ -32,8 +32,9 @@ export function ImageUpload({ value, onChange, disabled, bucket = process.env.SU
       }
       const compressedFile = await imageCompression(file, options)
 
+      // Use unique filename
       const fileExt = file.name.split('.').pop()
-      const fileName = `${Math.random()}.${fileExt}`
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
       const filePath = `${fileName}`
 
       const { error: uploadError } = await supabase.storage
@@ -45,7 +46,6 @@ export function ImageUpload({ value, onChange, disabled, bucket = process.env.SU
       }
 
       const { data } = supabase.storage.from(bucket).getPublicUrl(filePath)
-
       onChange(data.publicUrl)
     } catch (error) {
       console.error(error)
@@ -55,41 +55,59 @@ export function ImageUpload({ value, onChange, disabled, bucket = process.env.SU
     }
   }
 
-  const onRemove = async () => {
+  const onRemove = (e: React.MouseEvent) => {
+    e.stopPropagation() // Prevent triggering the file input
     onChange("")
   }
 
   return (
     <div className="flex items-center gap-4">
-      <div className="relative w-[200px] h-[200px] bg-slate-100 rounded-md overflow-hidden border border-dashed flex items-center justify-center">
+      <div
+        onClick={() => !disabled && !loading && document.getElementById('file-upload')?.click()}
+        className={`
+          relative w-[200px] h-[200px]
+          bg-slate-50 dark:bg-slate-900
+          rounded-md overflow-hidden border-2 border-dashed
+          flex items-center justify-center
+          cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors
+          ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
+        `}
+      >
         {loading ? (
-          <Loader2 className="h-6 w-6 animate-spin text-slate-500" />
+          <div className="flex flex-col items-center gap-2">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <span className="text-sm text-muted-foreground">Enviando...</span>
+          </div>
         ) : value ? (
           <>
             <div className="absolute top-2 right-2 z-10">
-              <Button type="button" onClick={onRemove} variant="destructive" size="icon" className="h-6 w-6">
-                <X className="h-4 w-4" />
+              <Button
+                type="button"
+                onClick={onRemove}
+                variant="destructive"
+                size="icon"
+                className="h-8 w-8 rounded-full shadow-md"
+              >
+                <Trash2 className="h-4 w-4" />
               </Button>
             </div>
             <Image
               fill
               className="object-cover"
-              alt="Image"
+              alt="Preview"
               src={value}
             />
           </>
         ) : (
-          <div className="flex flex-col items-center gap-2 text-slate-500">
-             <ImagePlus className="h-8 w-8" />
-             <span className="text-xs">Upload de Imagem</span>
+          <div className="flex flex-col items-center gap-2 text-slate-400 p-4 text-center">
+             <ImagePlus className="h-10 w-10 mb-2" />
+             <span className="text-sm font-medium text-slate-600">Clique para selecionar</span>
+             <span className="text-xs text-slate-400">JPG, PNG (max 10MB)</span>
           </div>
         )}
-      </div>
-      <div>
-         <Button type="button" disabled={disabled || loading} variant="secondary" onClick={() => document.getElementById('file-upload')?.click()}>
-            Escolher Imagem
-         </Button>
-         <input
+
+        {/* Hidden Input */}
+        <input
             id="file-upload"
             type="file"
             accept="image/*"
