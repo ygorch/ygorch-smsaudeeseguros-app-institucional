@@ -6,7 +6,7 @@ import { Testimonials } from "@/components/testimonials"
 import { FAQ } from "@/components/faq"
 import { Contact } from "@/components/contact"
 import { Footer } from "@/components/footer"
-import { FloatingWhatsApp } from "@/components/floating-whatsapp"
+import { FloatingContactMenu } from "@/components/floating-contact-menu"
 import { createClient } from "@/lib/supabase/server"
 
 export default async function Home() {
@@ -51,7 +51,7 @@ export default async function Home() {
         <Contact data={siteConfig} />
       </main>
       <Footer data={siteConfig} />
-      <FloatingWhatsApp data={siteConfig} />
+      <FloatingContactMenu data={siteConfig} />
     </div>
   )
 }
