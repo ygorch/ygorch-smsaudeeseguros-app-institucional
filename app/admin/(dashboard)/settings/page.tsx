@@ -202,6 +202,26 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
+        <Card>
+          <CardHeader>
+            <CardTitle>Integrações</CardTitle>
+            <CardDescription>Conecte o sistema a outras ferramentas.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+              <div className="space-y-2">
+                  <Label>URL do Webhook (n8n, Zapier, etc.)</Label>
+                  <Input
+                    placeholder="https://sua-url-do-webhook.com"
+                    value={data.webhook_n8n_url || ''}
+                    onChange={(e) => handleChange('webhook_n8n_url', e.target.value)}
+                  />
+                  <p className="text-xs text-slate-500">
+                    Sempre que um novo Lead for capturado, o sistema enviará um POST com os dados do Lead para esta URL.
+                  </p>
+                </div>
+          </CardContent>
+        </Card>
+
         <Button type="submit" disabled={saving}>
           {saving ? "Salvando..." : "Salvar Alterações"}
         </Button>

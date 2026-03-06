@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { createClient } from "@/lib/supabase/client"
+import { triggerWebhook } from "@/lib/webhook"
 import { toast } from "sonner"
 import { maskPhone, maskCNPJ, maskCurrency } from "@/lib/masks"
 import { CheckCircle2 } from "lucide-react"
@@ -103,17 +104,20 @@ export function SolutionsFormModal({ isOpen, onClose, serviceTitle, buttonTextFo
     }
 
     try {
-        const { error } = await supabase.from('leads').insert({
+        const { data: insertedLead, error } = await supabase.from('leads').insert({
             name: formData.name,
             email: formData.email,
             phone: formData.phone,
             interest: serviceTitle,
             metadata: Object.keys(metadata).length > 0 ? metadata : null
-        })
+        }).select().single()
 
         if (error) throw error
 
         setIsSuccess(true)
+
+        // Fire webhook asynchronously
+        triggerWebhook(insertedLead)
     } catch (error) {
         console.error("Error submitting lead:", error)
         toast.error("Ocorreu um erro ao enviar seus dados. Tente novamente.")
@@ -167,8 +171,34 @@ export function SolutionsFormModal({ isOpen, onClose, serviceTitle, buttonTextFo
                     </div>
                 </div>
 
+                {isPlanoSaude && (
+                  <div className="flex items-center space-x-2 bg-slate-50 p-3 rounded-lg border mt-2">
+                    <Switch
+                      id="tipo-contratacao"
+                      checked={tipoContratacao === "PME / Empresarial"}
+                      onCheckedChange={(checked) => setTipoContratacao(checked ? "PME / Empresarial" : "Individual")}
+                    />
+                    <Label htmlFor="tipo-contratacao" className="cursor-pointer">
+                      Sou PME / Empresarial (a partir de 2 vidas)
+                    </Label>
+                  </div>
+                )}
+
+                {isFinanciamento && (
+                  <div className="flex items-center space-x-2 bg-slate-50 p-3 rounded-lg border mt-2">
+                    <Switch
+                      id="tipo-pessoa"
+                      checked={tipoPessoa === "Jurídica"}
+                      onCheckedChange={(checked) => setTipoPessoa(checked ? "Jurídica" : "Física")}
+                    />
+                    <Label htmlFor="tipo-pessoa" className="cursor-pointer">
+                      Sou Pessoa Jurídica (PJ)
+                    </Label>
+                  </div>
+                )}
+
                 {isPlanoSaude && tipoContratacao === "PME / Empresarial" && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2">
                         <div className="space-y-2">
                             <Label>CNPJ</Label>
                             <Input name="cnpj" value={formData.cnpj} onChange={handleChange} placeholder="00.000.000/0000-00" required />
@@ -181,7 +211,7 @@ export function SolutionsFormModal({ isOpen, onClose, serviceTitle, buttonTextFo
                 )}
 
                 {isFinanciamento && (
-                    <>
+                    <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
                         {tipoPessoa === "Jurídica" && (
                              <div className="space-y-2">
                                 <Label>CNPJ</Label>
@@ -208,33 +238,7 @@ export function SolutionsFormModal({ isOpen, onClose, serviceTitle, buttonTextFo
                                 <Input type="number" name="anoVeiculo" value={formData.anoVeiculo} onChange={handleChange} min="1900" max={new Date().getFullYear() + 1} required />
                             </div>
                         </div>
-                    </>
-                )}
-
-                {isPlanoSaude && (
-                  <div className="flex items-center space-x-2 bg-slate-50 p-3 rounded-lg border mt-2">
-                    <Switch
-                      id="tipo-contratacao"
-                      checked={tipoContratacao === "PME / Empresarial"}
-                      onCheckedChange={(checked) => setTipoContratacao(checked ? "PME / Empresarial" : "Individual")}
-                    />
-                    <Label htmlFor="tipo-contratacao" className="cursor-pointer">
-                      Sou PME / Empresarial (a partir de 2 vidas)
-                    </Label>
-                  </div>
-                )}
-
-                {isFinanciamento && (
-                  <div className="flex items-center space-x-2 bg-slate-50 p-3 rounded-lg border mt-2">
-                    <Switch
-                      id="tipo-pessoa"
-                      checked={tipoPessoa === "Jurídica"}
-                      onCheckedChange={(checked) => setTipoPessoa(checked ? "Jurídica" : "Física")}
-                    />
-                    <Label htmlFor="tipo-pessoa" className="cursor-pointer">
-                      Sou Pessoa Jurídica (PJ)
-                    </Label>
-                  </div>
+                    </div>
                 )}
 
                 <div className="flex gap-2 pt-2">
