@@ -23,16 +23,52 @@ export async function triggerWebhook(leadData: any) {
 
         const url = config.webhook_n8n_url
 
-        // Fire and forget
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(leadData),
-        }).catch((err) => {
-            console.error("Failed to send webhook to n8n:", err)
-        })
+        // Execute async request and log the outcome
+        try {
+            const start = Date.now()
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(leadData),
+            })
+
+            // Parse headers
+            const responseHeaders: any = {}
+            response.headers.forEach((value, key) => {
+                responseHeaders[key] = value
+            })
+
+            // Parse body
+            let responseBodyText = ""
+            try {
+                responseBodyText = await response.text()
+            } catch (e) {
+                responseBodyText = "Could not parse response body"
+            }
+
+            // Log success to DB
+            await supabase.from('webhook_logs').insert({
+                url,
+                request_body: leadData,
+                response_status: response.status,
+                response_headers: responseHeaders,
+                response_body: responseBodyText
+            })
+
+        } catch (fetchErr: any) {
+            console.error("Failed to send webhook to n8n:", fetchErr)
+
+            // Log network failure to DB
+            await supabase.from('webhook_logs').insert({
+                url,
+                request_body: leadData,
+                response_status: 0,
+                response_headers: null,
+                response_body: fetchErr.message || "Network error or timeout"
+            })
+        }
 
     } catch (err) {
         console.error("Unexpected error triggering webhook:", err)
