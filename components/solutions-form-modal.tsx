@@ -150,32 +150,6 @@ export function SolutionsFormModal({ isOpen, onClose, serviceTitle, buttonTextFo
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-          {isPlanoSaude && (
-            <div className="flex items-center space-x-2 bg-slate-50 p-3 rounded-lg border">
-              <Switch
-                id="tipo-contratacao"
-                checked={tipoContratacao === "PME / Empresarial"}
-                onCheckedChange={(checked) => setTipoContratacao(checked ? "PME / Empresarial" : "Individual")}
-              />
-              <Label htmlFor="tipo-contratacao" className="cursor-pointer">
-                Sou PME / Empresarial (a partir de 2 vidas)
-              </Label>
-            </div>
-          )}
-
-          {isFinanciamento && (
-            <div className="flex items-center space-x-2 bg-slate-50 p-3 rounded-lg border">
-              <Switch
-                id="tipo-pessoa"
-                checked={tipoPessoa === "Jurídica"}
-                onCheckedChange={(checked) => setTipoPessoa(checked ? "Jurídica" : "Física")}
-              />
-              <Label htmlFor="tipo-pessoa" className="cursor-pointer">
-                Sou Pessoa Jurídica (PJ)
-              </Label>
-            </div>
-          )}
-
           <div className="space-y-4 animate-in fade-in zoom-in-95 duration-200">
                 <div className="space-y-2">
                     <Label>Nome Completo</Label>
@@ -235,6 +209,32 @@ export function SolutionsFormModal({ isOpen, onClose, serviceTitle, buttonTextFo
                             </div>
                         </div>
                     </>
+                )}
+
+                {isPlanoSaude && (
+                  <div className="flex items-center space-x-2 bg-slate-50 p-3 rounded-lg border mt-2">
+                    <Switch
+                      id="tipo-contratacao"
+                      checked={tipoContratacao === "PME / Empresarial"}
+                      onCheckedChange={(checked) => setTipoContratacao(checked ? "PME / Empresarial" : "Individual")}
+                    />
+                    <Label htmlFor="tipo-contratacao" className="cursor-pointer">
+                      Sou PME / Empresarial (a partir de 2 vidas)
+                    </Label>
+                  </div>
+                )}
+
+                {isFinanciamento && (
+                  <div className="flex items-center space-x-2 bg-slate-50 p-3 rounded-lg border mt-2">
+                    <Switch
+                      id="tipo-pessoa"
+                      checked={tipoPessoa === "Jurídica"}
+                      onCheckedChange={(checked) => setTipoPessoa(checked ? "Jurídica" : "Física")}
+                    />
+                    <Label htmlFor="tipo-pessoa" className="cursor-pointer">
+                      Sou Pessoa Jurídica (PJ)
+                    </Label>
+                  </div>
                 )}
 
                 <div className="flex gap-2 pt-2">
