@@ -82,6 +82,7 @@ CREATE TABLE IF NOT EXISTS solutions (
   action_link TEXT,
   button_text_card TEXT DEFAULT 'Cotar agora',
   button_text_form TEXT DEFAULT 'Quero receber minha cotação personalizada',
+  pj_checkbox_text TEXT DEFAULT 'Tenho CNPJ',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 

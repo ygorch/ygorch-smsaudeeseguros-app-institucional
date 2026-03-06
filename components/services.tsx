@@ -74,6 +74,7 @@ export function Services({ data }: ServicesProps) {
           onClose={() => setIsModalOpen(false)}
           serviceTitle={selectedService.title}
           buttonTextForm={selectedService.button_text_form}
+          pjCheckboxText={selectedService.pj_checkbox_text}
         />
       )}
     </section>

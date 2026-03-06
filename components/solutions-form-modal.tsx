@@ -17,11 +17,11 @@ interface SolutionsFormModalProps {
   onClose: () => void
   serviceTitle: string
   buttonTextForm: string
+  pjCheckboxText?: string
 }
 
-export function SolutionsFormModal({ isOpen, onClose, serviceTitle, buttonTextForm }: SolutionsFormModalProps) {
-  const [tipoContratacao, setTipoContratacao] = useState("Individual")
-  const [tipoPessoa, setTipoPessoa] = useState("Física")
+export function SolutionsFormModal({ isOpen, onClose, serviceTitle, buttonTextForm, pjCheckboxText = "Tenho CNPJ" }: SolutionsFormModalProps) {
+  const [isPJ, setIsPJ] = useState(false)
 
   const [formData, setFormData] = useState({
     name: "",
@@ -43,8 +43,7 @@ export function SolutionsFormModal({ isOpen, onClose, serviceTitle, buttonTextFo
 
   useEffect(() => {
     if (isOpen) {
-      setTipoContratacao("Individual")
-      setTipoPessoa("Física")
+      setIsPJ(false)
       setFormData({
         name: "", email: "", phone: "", cnpj: "", vidas: "",
         valorEntrada: "", valorVeiculo: "", modeloVeiculo: "", anoVeiculo: ""
@@ -81,10 +80,16 @@ export function SolutionsFormModal({ isOpen, onClose, serviceTitle, buttonTextFo
     const supabase = createClient()
 
     const metadata: any = {}
+
+    // Always attach PJ context if checked
+    metadata.isPJ = isPJ
+    if (isPJ) {
+        metadata.cnpj = formData.cnpj
+    }
+
     if (isPlanoSaude) {
-        metadata.tipoContratacao = tipoContratacao
-        if (tipoContratacao === "PME / Empresarial") {
-            metadata.cnpj = formData.cnpj
+        metadata.tipoContratacao = isPJ ? "PME / Empresarial" : "Individual"
+        if (isPJ) {
             metadata.vidas = parseInt(formData.vidas) || 0
             if (metadata.vidas >= 2 && metadata.vidas <= 99) {
                 metadata.classificacao = "PME"
@@ -93,10 +98,7 @@ export function SolutionsFormModal({ isOpen, onClose, serviceTitle, buttonTextFo
             }
         }
     } else if (isFinanciamento) {
-        metadata.tipoPessoa = tipoPessoa
-        if (tipoPessoa === "Jurídica") {
-            metadata.cnpj = formData.cnpj
-        }
+        metadata.tipoPessoa = isPJ ? "Jurídica" : "Física"
         metadata.valorEntrada = formData.valorEntrada
         metadata.valorVeiculo = formData.valorVeiculo
         metadata.modeloVeiculo = formData.modeloVeiculo
@@ -171,53 +173,35 @@ export function SolutionsFormModal({ isOpen, onClose, serviceTitle, buttonTextFo
                     </div>
                 </div>
 
-                {isPlanoSaude && (
-                  <div className="flex items-center space-x-2 bg-slate-50 p-3 rounded-lg border mt-2">
-                    <Switch
-                      id="tipo-contratacao"
-                      checked={tipoContratacao === "PME / Empresarial"}
-                      onCheckedChange={(checked) => setTipoContratacao(checked ? "PME / Empresarial" : "Individual")}
-                    />
-                    <Label htmlFor="tipo-contratacao" className="cursor-pointer">
-                      Sou PME / Empresarial (a partir de 2 vidas)
-                    </Label>
-                  </div>
-                )}
+                {/* Unified PJ Switch for any form solution */}
+                <div className="flex items-center space-x-2 bg-slate-50 p-3 rounded-lg border mt-2">
+                  <Switch
+                    id="is-pj"
+                    checked={isPJ}
+                    onCheckedChange={(checked) => setIsPJ(checked)}
+                  />
+                  <Label htmlFor="is-pj" className="cursor-pointer">
+                    {pjCheckboxText}
+                  </Label>
+                </div>
 
-                {isFinanciamento && (
-                  <div className="flex items-center space-x-2 bg-slate-50 p-3 rounded-lg border mt-2">
-                    <Switch
-                      id="tipo-pessoa"
-                      checked={tipoPessoa === "Jurídica"}
-                      onCheckedChange={(checked) => setTipoPessoa(checked ? "Jurídica" : "Física")}
-                    />
-                    <Label htmlFor="tipo-pessoa" className="cursor-pointer">
-                      Sou Pessoa Jurídica (PJ)
-                    </Label>
-                  </div>
-                )}
-
-                {isPlanoSaude && tipoContratacao === "PME / Empresarial" && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2">
-                        <div className="space-y-2">
-                            <Label>CNPJ</Label>
-                            <Input name="cnpj" value={formData.cnpj} onChange={handleChange} placeholder="00.000.000/0000-00" required />
-                        </div>
-                        <div className="space-y-2">
-                            <Label>Quantidade de Vidas</Label>
-                            <Input type="number" name="vidas" value={formData.vidas} onChange={handleChange} min="2" required />
-                        </div>
+                {isPJ && (
+                  <div className={`grid grid-cols-1 ${isPlanoSaude ? 'md:grid-cols-2' : ''} gap-4 animate-in fade-in slide-in-from-top-2 mt-4`}>
+                    <div className="space-y-2">
+                        <Label>CNPJ</Label>
+                        <Input name="cnpj" value={formData.cnpj} onChange={handleChange} placeholder="00.000.000/0000-00" required />
                     </div>
+                    {isPlanoSaude && (
+                      <div className="space-y-2">
+                          <Label>Quantidade de Vidas</Label>
+                          <Input type="number" name="vidas" value={formData.vidas} onChange={handleChange} min="2" required />
+                      </div>
+                    )}
+                  </div>
                 )}
 
                 {isFinanciamento && (
-                    <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
-                        {tipoPessoa === "Jurídica" && (
-                             <div className="space-y-2">
-                                <Label>CNPJ</Label>
-                                <Input name="cnpj" value={formData.cnpj} onChange={handleChange} placeholder="00.000.000/0000-00" required />
-                            </div>
-                        )}
+                    <div className="space-y-4 animate-in fade-in slide-in-from-top-2 mt-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label>Valor do Veículo</Label>
@@ -230,7 +214,7 @@ export function SolutionsFormModal({ isOpen, onClose, serviceTitle, buttonTextFo
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label>Modelo do Veículo</Label>
+                                <Label>Marca / Modelo</Label>
                                 <Input name="modeloVeiculo" value={formData.modeloVeiculo} onChange={handleChange} required />
                             </div>
                             <div className="space-y-2">

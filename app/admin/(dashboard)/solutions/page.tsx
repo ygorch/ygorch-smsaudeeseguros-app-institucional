@@ -28,7 +28,8 @@ export default function SolutionsPage() {
     action_type: "form",
     action_link: "",
     button_text_card: "Cotar agora",
-    button_text_form: "Quero receber minha cotação personalizada"
+    button_text_form: "Quero receber minha cotação personalizada",
+    pj_checkbox_text: "Tenho CNPJ"
   })
   const supabase = createClient()
 
@@ -73,7 +74,8 @@ export default function SolutionsPage() {
         action_type: item.action_type || "form",
         action_link: item.action_link || "",
         button_text_card: item.button_text_card || "Cotar agora",
-        button_text_form: item.button_text_form || "Quero receber minha cotação personalizada"
+        button_text_form: item.button_text_form || "Quero receber minha cotação personalizada",
+        pj_checkbox_text: item.pj_checkbox_text || "Tenho CNPJ"
       })
     } else {
       setEditingItem(null)
@@ -85,7 +87,8 @@ export default function SolutionsPage() {
         action_type: "form",
         action_link: "",
         button_text_card: "Cotar agora",
-        button_text_form: "Quero receber minha cotação personalizada"
+        button_text_form: "Quero receber minha cotação personalizada",
+        pj_checkbox_text: "Tenho CNPJ"
       })
     }
     setIsOpen(true)
@@ -258,14 +261,28 @@ export default function SolutionsPage() {
                 )}
 
                 {formData.action_type === 'form' && (
-                  <div className="space-y-2">
-                    <Label>Texto do botão de enviar (dentro do formulário)</Label>
-                    <Input
-                      value={formData.button_text_form}
-                      onChange={(e) => setFormData({...formData, button_text_form: e.target.value})}
-                      placeholder="Ex: Quero receber minha cotação personalizada"
-                      required={formData.action_type === 'form'}
-                    />
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Texto do botão de enviar (dentro do formulário)</Label>
+                      <Input
+                        value={formData.button_text_form}
+                        onChange={(e) => setFormData({...formData, button_text_form: e.target.value})}
+                        placeholder="Ex: Quero receber minha cotação personalizada"
+                        required={formData.action_type === 'form'}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Texto da opção de CNPJ</Label>
+                      <Input
+                        value={formData.pj_checkbox_text}
+                        onChange={(e) => setFormData({...formData, pj_checkbox_text: e.target.value})}
+                        placeholder="Ex: Tenho CNPJ"
+                        required={formData.action_type === 'form'}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Frase exibida na opção para abrir os campos de pessoa jurídica.
+                      </p>
+                    </div>
                   </div>
                 )}
               </div>
